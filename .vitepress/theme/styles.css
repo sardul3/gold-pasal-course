@@ -7,6 +7,7 @@
   --gp-paper: #fbfaf6;
   --gp-ink: #25212d;
   --gp-muted: #6b6573;
+  --gp-focus: var(--gp-oxide);
   --vp-c-brand-1: var(--gp-oxide);
   --vp-c-brand-2: #8f3928;
   --vp-c-brand-3: #742f24;
@@ -31,6 +32,7 @@
   --vp-c-brand-2: #e2b84d;
   --vp-c-brand-3: #c99c32;
   --vp-c-brand-soft: rgb(244 201 93 / 14%);
+  --gp-focus: var(--gp-saffron);
 }
 
 html {
@@ -159,7 +161,7 @@ body {
 .gp-button:focus-visible,
 .gp-input:focus-visible,
 .gp-link:focus-visible {
-  outline: 3px solid var(--gp-saffron);
+  outline: 3px solid var(--gp-focus);
   outline-offset: 3px;
 }
 

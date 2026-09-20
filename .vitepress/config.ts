@@ -42,10 +42,7 @@ export default defineConfig({
           { text: 'How evidence works', link: '/reference/evidence-rubric' },
         ],
       },
-      {
-        text: 'Core releases',
-        items: releaseSidebar,
-      },
+      ...releaseSidebar,
       {
         text: 'Reference',
         items: [

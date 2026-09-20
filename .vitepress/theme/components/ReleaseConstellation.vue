@@ -12,7 +12,7 @@ const capabilityLabel = {
 
 <template>
   <nav class="constellation" aria-label="Gold Pasal release path">
-    <ol class="constellation__timeline">
+    <ol class="constellation__timeline" role="list">
       <li
         v-for="release in releases"
         :key="release.id"

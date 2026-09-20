@@ -30,6 +30,7 @@ describe('lesson components', () => {
     expect(links[0].attributes('href')).toBe('/releases/r0/')
     expect(links[13].attributes('href')).toBe('/releases/r13/')
     expect(wrapper.get('ol').classes()).toContain('constellation__timeline')
+    expect(wrapper.get('ol').attributes('role')).toBe('list')
   })
 
   it('keeps the answer hidden until a concrete prediction is recorded', async () => {
