@@ -1,0 +1,75 @@
+import { fileURLToPath } from 'node:url'
+import { defineConfig } from 'vitepress'
+
+import { createReleaseSidebar } from './sidebar'
+
+const releasesRoot = fileURLToPath(new URL('../docs/releases/', import.meta.url))
+const releaseSidebar = createReleaseSidebar(releasesRoot)
+
+export default defineConfig({
+  lang: 'en-US',
+  title: 'Gold Pasal',
+  description:
+    'Build a Nepal jewelry store while learning production Python, FastAPI, operations, and safe AI systems.',
+  srcDir: 'docs',
+  cleanUrls: true,
+  lastUpdated: true,
+  head: [
+    ['meta', { name: 'theme-color', content: '#2d2347' }],
+    ['meta', { name: 'color-scheme', content: 'light dark' }],
+  ],
+  markdown: {
+    lineNumbers: true,
+  },
+  themeConfig: {
+    logo: {
+      light: '/mark.svg',
+      dark: '/mark-dark.svg',
+      alt: 'Gold Pasal assay mark',
+    },
+    nav: [
+      { text: 'Course map', link: '/course-map' },
+      { text: 'Learner desk', link: '/desk' },
+      { text: 'Reference', link: '/reference/domain-glossary' },
+      { text: 'Side quests', link: '/side-quests/' },
+    ],
+    sidebar: [
+      {
+        text: 'Start here',
+        items: [
+          { text: 'Course map', link: '/course-map' },
+          { text: 'Learner desk', link: '/desk' },
+          { text: 'How evidence works', link: '/reference/evidence-rubric' },
+        ],
+      },
+      {
+        text: 'Core releases',
+        items: releaseSidebar,
+      },
+      {
+        text: 'Reference',
+        items: [
+          { text: 'Domain glossary', link: '/reference/domain-glossary' },
+          { text: 'R1 pricing contract', link: '/reference/pricing-contract' },
+          { text: 'Related projects', link: '/resources/related-projects' },
+          { text: 'Lesson template', link: '/reference/lesson-template' },
+        ],
+      },
+    ],
+    search: {
+      provider: 'local',
+    },
+    outline: {
+      level: [2, 3],
+      label: 'On this bench',
+    },
+    docFooter: {
+      prev: 'Previous lesson',
+      next: 'Next lesson',
+    },
+    footer: {
+      message: 'Built as one cumulative, inspectable engineering story.',
+      copyright: 'Gold Pasal Course',
+    },
+  },
+})
