@@ -17,7 +17,9 @@ describe('lesson components', () => {
     })
 
     expect(wrapper.get('aside').attributes('aria-labelledby')).toBe('mission-title')
-    expect(wrapper.text()).toContain('Exactly one hold succeeds.')
+    expect(wrapper.get('#mission-title').text()).toBe('The job in front of you')
+    expect(wrapper.text()).toContain('Incoming at the counter · inventory manager')
+    expect(wrapper.text()).toContain('Done looks like: Exactly one hold succeeds.')
   })
 
   it('renders every release as a linked timeline step in order', () => {
