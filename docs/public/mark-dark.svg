@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title">
+  <title id="title">Gold Pasal assay mark</title>
+  <circle cx="24" cy="24" r="20" fill="#f4c95d"/>
+  <circle cx="24" cy="24" r="13" fill="none" stroke="#191522" stroke-width="2"/>
+  <path d="M15 28h18M18 22h12M21 16h6" fill="none" stroke="#191522" stroke-linecap="round" stroke-width="3"/>
+</svg>

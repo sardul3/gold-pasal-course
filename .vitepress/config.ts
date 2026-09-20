@@ -5,16 +5,21 @@ import { createReleaseSidebar } from './sidebar'
 
 const releasesRoot = fileURLToPath(new URL('../docs/releases/', import.meta.url))
 const releaseSidebar = createReleaseSidebar(releasesRoot)
+const siteBase = process.env.GITHUB_ACTIONS ? '/gold-pasal-course/' : '/'
 
 export default defineConfig({
   lang: 'en-US',
   title: 'Gold Pasal',
   description:
     'Build a Nepal jewelry store while learning production Python, FastAPI, operations, and safe AI systems.',
+  base: siteBase,
   srcDir: 'docs',
   cleanUrls: true,
   lastUpdated: true,
   head: [
+    ['link', { rel: 'icon', href: `${siteBase}favicon.svg`, type: 'image/svg+xml' }],
+    ['link', { rel: 'icon', href: `${siteBase}favicon-32.png`, type: 'image/png', sizes: '32x32' }],
+    ['link', { rel: 'apple-touch-icon', href: `${siteBase}apple-touch-icon.png` }],
     ['meta', { name: 'theme-color', content: '#2d2347' }],
     ['meta', { name: 'color-scheme', content: 'light dark' }],
   ],

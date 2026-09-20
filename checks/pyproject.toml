@@ -1,0 +1,17 @@
+[project]
+name = "gold-pasal-course-checks"
+version = "0.1.0"
+description = "Black-box release checks for the learner-owned Gold Pasal application"
+requires-python = ">=3.12"
+dependencies = [
+  "httpx>=0.28,<1",
+  "mcp>=1.13,<2",
+  "pytest>=8.4,<9",
+  "pytest-asyncio>=1.1,<2",
+  "pyyaml>=6,<7",
+]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12"]
+asyncio_mode = "strict"
