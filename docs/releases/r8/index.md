@@ -1,39 +1,44 @@
 ---
-title: "R8 — Gold Pasal on homelab Kubernetes"
-description: "A constrained, observable workload with a tested rollback path."
+title: "R8: Kubernetes on kind"
+description: "A local kind cluster runs the API with Deployment, Service, Ingress, probes, and a tested rollback."
 ---
 
-# R8 — Gold Pasal on homelab Kubernetes
+# R8: Kubernetes on kind
 
-**Release promise:** A constrained, observable workload with a tested rollback path.
+**What you'll have:** a kind cluster; Deployment, Service, and Ingress for the R7 image; ConfigMap and Secret; probes; a rollout undo; a short debug runbook.
 
 <LessonMission
-  role="homelab platform operator"
+  role="platform operator"
   problem="A new API image must roll out without dropping healthy traffic or hiding an invalid configuration."
-  destination="Kubernetes converges to a constrained workload and exposes a tested rollback path."
+  destination="kind converges to a constrained workload and you can undo a bad revision."
 />
 
-## Lessons
+## Before you start
 
-1. [Read Kubernetes objects as desired-state documents](01-read-kubernetes-objects-as-desired-state-documents)
-2. [Deploy immutable API images with Deployment and Service](02-deploy-immutable-api-images-with-deployment-and-service)
-3. [Route traffic through the homelab Ingress](03-route-traffic-through-the-homelab-ingress)
-4. [Manage configuration and secrets without committing credentials](04-manage-configuration-and-secrets-without-committing-credentials)
-5. [Configure probes, requests, limits, and graceful shutdown](05-configure-probes-requests-limits-and-graceful-shutdown)
-6. [Package environments with Kustomize](06-package-environments-with-kustomize)
-7. [Roll out, observe, and roll back a release](07-roll-out-observe-and-roll-back-a-release)
-8. [Diagnose Pending, CrashLoopBackOff, and unavailable Service scenarios](08-diagnose-pending-crashloopbackoff-and-unavailable-service-scenarios)
-9. [Handle migrations and dependent services safely](09-handle-migrations-and-dependent-services-safely)
-10. [Add network and workload security controls appropriate to the homelab](10-add-network-and-workload-security-controls-appropriate-to-the-homelab)
-11. [Release gate: perform a witnessed rollout and recovery drill](11-release-gate-perform-a-witnessed-rollout-and-recovery-drill)
+You finished [R7](/releases/r7/): `docker compose up --build --wait` and `/ready` is 200. Prove it, then install `kind` and `kubectl`.
+
+Homelab hardware is not required. Optional overlays live in [Homelab and Kustomize](/side-quests/homelab-kustomize-overlay). The objects you learn here are the same ones EKS and GKE expose.
+
+## Guide
+
+| Page | You will be able to |
+| --- | --- |
+| [kind cluster and Kubernetes objects](01-kind-cluster-and-kubernetes-objects) | create the cluster and name Pod, Deployment, Service, Ingress |
+| [Deployment and Service](02-deployment-and-service) | run the R7 image and port-forward /health |
+| [Ingress on kind](03-ingress-on-kind) | curl gold-pasal.local |
+| [ConfigMaps and Secrets](04-configmaps-and-secrets) | inject Settings without committing tokens |
+| [Probes, requests, and limits](05-probes-requests-and-limits) | fail readiness when /ready fails |
+| [Roll out and roll back](06-roll-out-and-roll-back) | undo a bad template |
+| [Debug Pending and CrashLoop](07-debug-pending-and-crashloop) | read Events and logs |
+| [Release gate: kind rollout drill](08-release-gate-kind-rollout-drill) | apply, break, undo, curl |
 
 ## Release evidence
 
-Run `kubectl kustomize deploy/overlays/homelab | kubectl apply --dry-run=server -f -` and preserve rendered manifests, rollout status, and rollback evidence. At the review, defend this
-invariant: **unready workloads receive no traffic and credentials stay outside Git.**
+```bash
+kubectl apply -f deploy/kind/
+kubectl rollout status deployment/gold-pasal-api
+```
 
-<ArchitectureTrail
-  before="A new API image must roll out without dropping healthy traffic or hiding an invalid configuration."
-  decision="Introduce only the boundary and mechanism needed by this release."
-  after="Kubernetes converges to a constrained workload and exposes a tested rollback path."
-/>
+## What R9 starts from
+
+Manifests in Git and a working kind cluster. R9 builds once to GHCR and pins a digest. Argo CD is a side quest, not a gate.

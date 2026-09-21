@@ -13,7 +13,7 @@ A lesson is ready only when a learner can answer all of these questions:
 7. Which automated check proves the public behavior?
 8. Which artifact belongs in my portfolio ledger?
 
-Use second person and imperative voice. Keep examples in the Nepal jewelry domain. Gloss a term once, then use the real word. Never say “simply,” “obviously,” or “as you know.” Write a live session: destination, then type this, then expected output, then the next piece. Park long why on a concept page. Do not make notes homework the main activity.
+Use second person and imperative voice. Keep examples in the Nepal jewelry domain. Gloss a term once, then use the real word. Never say “simply,” “obviously,” or “as you know.” Write a live session: destination, then type this, then expected output, then the next piece. Park long why on a concept page. Do not make notes homework the main activity. Learners follow the published site and type in `gold-pasal`. Do not mention `gold-pasal-course` as a local folder they might open.
 
 ## Lesson structure
 

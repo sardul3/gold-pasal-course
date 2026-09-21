@@ -1,22 +1,22 @@
 ---
 title: Course map
-description: Fourteen cumulative releases from Python foundations to a production AI portfolio.
+description: Fifteen cumulative releases from Python foundations to a forward-deployed integration and portfolio.
 ---
 
-# Fourteen releases, one inspectable system
+# Fifteen releases, one inspectable system
 
-Gold Pasal starts at a shop counter: a customer wants to know why a 22K ring costs what it costs. It ends with a deployed API, an evaluated local assistant, a bounded staff agent, and an MCP server that cannot bypass store rules.
+Gold Pasal starts at a shop counter: a customer wants to know why a 22K ring costs what it costs. It ends with a digest-pinned API, an evaluated assistant (Ollama by default, OpenAI adapter on fixtures), a bounded staff agent, an MCP server that cannot bypass store rules, a mock customer integration, and a portfolio you can defend.
 
 <ReleaseConstellation />
 
 ## How to move through a release
 
-1. Read the release promise and reproduce the opening store problem.
+1. Read what you'll have and reproduce the opening store problem.
 2. Complete lessons in order. Later checks assume earlier behavior still works.
 3. Keep each change small enough to explain in a code review.
 4. Run the release verification command.
 5. Attach evidence to the Portfolio Ledger.
-6. Perform the failure drill and defend one design trade-off.
+6. Run the release gate on the last lesson.
 
 ## Graduation bar
 
@@ -24,4 +24,4 @@ The core path is competency-based, not calendar-based. A release is complete whe
 
 ## What stays optional
 
-A TypeScript storefront, event-driven notifications, Temporal, deeper ML, and remote MCP transport are side quests. They can deepen a portfolio after R13, but they never become surprise prerequisites.
+A TypeScript storefront, homelab Kustomize, Argo CD, event-driven notifications, Temporal, deeper ML, and remote MCP transport are side quests. They can deepen a portfolio after R14, but they never become surprise prerequisites.

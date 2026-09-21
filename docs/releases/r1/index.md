@@ -1,44 +1,54 @@
 ---
-title: "R1 — The gold-rate quote desk"
-description: "A typed CLI that explains a Nepal jewelry quote in NPR."
+title: "R1: Intermediate and advanced Python"
+description: "Packages, exceptions, classes, types, generators, and pytest, ending in the gold-pasal quote CLI."
 ---
 
-# R1 — The gold-rate quote desk
+# R1: Intermediate and advanced Python
 
-**Release promise:** A typed CLI that explains a Nepal jewelry quote in NPR.
-
-One fixed [pricing contract](/reference/pricing-contract): tola conversion, purity, wastage, making charge, VAT, rounding, and output labels.
-
-Each lesson is a typed session. Stay on Maya's quote. Do not repeat the full CLI until the command exists.
+**What you'll have:** the Python that turns a script into a package other code can trust: modules and imports, exceptions, classes and dataclasses, type hints checked by pyright, generators and files, and pytest. The release ends with `uv run gold-pasal quote`, a typed CLI that prints Maya's itemized NPR quote from the [pricing contract](/reference/pricing-contract).
 
 <LessonMission
   role="counter salesperson"
-  problem="A customer asks why an 11.6638038 g, 22K ornament has this NPR total."
-  destination="The CLI prints a quote whose inputs and components can be checked by hand."
+  problem="Maya asks why an 11.6638038 g, 22K ornament totals NPR 231080.15. counter.py can print numbers, but nothing in gold_pasal can be imported, a 16K stamp only prints a message, and Sita cannot run a quote without editing a script."
+  destination="uv run gold-pasal quote prints Gold value, Wastage, Making charge, VAT, and Total; bad input exits non-zero; ./scripts/verify.sh is green with the quote tests."
 />
 
-## Lessons
+## Before you start
 
-1. [Model a customer quote with Python values and names](01-model-a-customer-quote-with-python-values-and-names)
-2. [Choose strings, integers, booleans, and Decimal for jewelry data](02-choose-strings-integers-booleans-and-decimal-for-jewelry-data)
-3. [Convert grams and tola without hiding rounding rules](03-convert-grams-and-tola-without-hiding-rounding-rules)
-4. [Represent karat choices with conditionals and enums](04-represent-karat-choices-with-conditionals-and-enums)
-5. [Price several products with lists, tuples, sets, and dictionaries](05-price-several-products-with-lists-tuples-sets-and-dictionaries)
-6. [Extract pricing rules into small functions](06-extract-pricing-rules-into-small-functions)
-7. [Validate bad weights, rates, and karat values with exceptions](07-validate-bad-weights-rates-and-karat-values-with-exceptions)
-8. [Split the quote desk into modules and packages](08-split-the-quote-desk-into-modules-and-packages)
-9. [Add type hints and let Pyright find a real defect](09-add-type-hints-and-let-pyright-find-a-real-defect)
-10. [Use dataclasses for quote inputs and results](10-use-dataclasses-for-quote-inputs-and-results)
-11. [Build a useful pricing CLI](11-build-a-useful-pricing-cli)
-12. [Release gate: explain and reproduce an NPR quote by hand and in code](12-release-gate-explain-and-reproduce-an-npr-quote-by-hand-and-in-code)
+You finished [R0](/releases/r0/): `gold-pasal` exists, `counter.py` prints three tray lines, and `tests/test_counter.py` has three green tests. Prove it from `gold-pasal`:
+
+```bash
+uv run pytest -q
+```
+
+```text
+....                                                                     [100%]
+4 passed in 0.02s
+```
+
+If that is not green, finish the [R0 gate](/releases/r0/07-release-gate-counter-script) first.
+
+Each page here is a topic with self-contained examples. The last page assembles them into `src/gold_pasal/pricing.py` and `src/gold_pasal/cli.py`.
+
+## Guide
+
+| Page | You will be able to |
+| --- | --- |
+| [Modules, packages, and imports](01-modules-packages-and-imports) | import from the standard library and from `gold_pasal`, add `units.py` |
+| [Exceptions and error handling](02-exceptions-and-error-handling) | read a traceback, `try`/`except`, `raise`, define `PricingError` |
+| [Classes, dataclasses, and enums](03-classes-dataclasses-and-enums) | model an ornament with a frozen dataclass and a `Karat` enum |
+| [Type hints, Protocols, and pyright](04-type-hints-protocols-and-pyright) | annotate functions, read a pyright error, write a `Protocol` |
+| [Generators, files, and decorators](05-generators-files-and-decorators) | `yield` tola readings, read a tray CSV, wrap a function |
+| [Test with pytest](06-test-with-pytest) | write, parametrize, and run tests; check that bad input raises |
+| [Release gate: the quote CLI](07-release-gate-the-quote-cli) | ship `gold-pasal quote` and pass the shop's verify command |
 
 ## Release evidence
 
-Run `uv run gold-pasal quote --rate-per-tola 200000 --weight-grams 11.6638038 --karat 22 --wastage-percent 2 --making-charge-per-gram 1500` and preserve a commit containing the CLI behavior and its printed quote. At the review, defend this
-invariant: **the same explicit inputs always produce the same itemized quote.**
+From `gold-pasal`:
 
-<ArchitectureTrail
-  before="A customer asks why an 11.6638038 g, 22K ornament has this NPR total."
-  decision="Introduce only the boundary and mechanism needed by this release."
-  after="The CLI prints a quote whose inputs and components can be checked by hand."
-/>
+```bash
+uv run gold-pasal quote --rate-per-tola 200000 --weight-grams 11.6638038 --karat 22 --wastage-percent 2 --making-charge-per-gram 1500
+./scripts/verify.sh
+```
+
+R2 keeps `gold_pasal.pricing.quote` as its public seam and adds value objects, a making-charge Protocol, and an in-memory catalog fake.

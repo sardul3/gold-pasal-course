@@ -1,55 +1,45 @@
 ---
-title: "R0 — Your Python workshop"
-description: "A reproducible Python workspace and a first green quality check."
+title: "R0: Core Python"
+description: "Set up the workshop, then values, collections, control flow, and functions, practiced on the Gold Pasal tray."
 ---
 
-# R0 — Your Python workshop
+# R0: Core Python
 
-**Release promise:** A reproducible Python workspace and a first green quality check.
+**What you'll have:** a working `gold-pasal` repository and the Python you need to read and write a small program: values and names, numbers and strings, collections, `if` and `for`, and functions. Every example uses the Gold Pasal counter (SKUs, grams, karat, NPR), so the code you type here is the code the shop uses later.
 
 <LessonMission
-  role="new backend engineer"
-  problem="The quote desk works on one laptop, but nobody can reproduce its Python setup."
-  destination="A clean checkout runs the same command and reports the same result."
+  role="new backend developer"
+  problem="Maya's ring is on the felt. The facts live in someone's head: name, grams, karat, rate. There is no repository, no Python, and you have not written Python before."
+  destination="You can build the shop repository from scratch, run Python in it, model a tray of ornaments with lists and dicts, branch on karat, and put pricing rules in functions that a test can call."
 />
 
-Two folders:
+## Before you start
 
-- **`gold-pasal-course`** — this site. You read it.
-- **`gold-pasal`** — the shop. You type there.
+Nothing. This release begins with an empty machine. The first page installs Git and uv and creates `gold-pasal`; every page after it says "from `gold-pasal`" and means that folder.
 
-If `pwd` ends in `gold-pasal-course`, you are in the library.
+## Guide
 
-## How to walk these seven pages
+Read in order. Each page is a topic, in the style of a language guide: a short example, its output, then the details.
 
-Open the shop. Run the command. Match the output. Then the one-line why.
-
-1. **Welcome** — find the two folders, open the smoke test, name what R0 proves.
-2. **Java to Python** — rebind a karat value, then map Gradle/JUnit habits onto `uv`, Ruff, Pyright, and pytest.
-3. **Prepare the workshop** — install Git and uv, frozen-sync, run `./scripts/verify.sh`.
-4. **The first program** — print `0.1.0`, inspect `__file__`, fail an assert on purpose.
-5. **Read a traceback** — cause `AttributeError`, copy the last line, ask five useful questions.
-6. **Small commits** — stage one file, unstage it, leave it on disk.
-7. **Release gate** — commit if needed, push, open the green `application-ci` run.
-
-Skip ahead and `./scripts/verify.sh` will look like a missing download. It is a path: the script lives in the shop folder, after `uv` is installed.
-
-## Lessons
-
-1. [Welcome to Gold Pasal](01-welcome-to-gold-pasal-the-product-learner-contract-and-graduation-evidence)
-2. [Java to Python](02-map-java-spring-habits-to-python-fastapiplus-where-the-analogy-fails)
-3. [Prepare the workshop](03-prepare-the-terminal-git-python-uv-editor-and-repository-safely)
-4. [The first program](04-run-inspect-and-debug-the-first-python-program)
-5. [Read a traceback](05-read-tracebacks-and-ask-useful-diagnostic-questions)
-6. [Small commits](06-work-in-small-commits-and-recover-without-destructive-git)
-7. [Release gate: first CI check](07-release-gate-reproducible-environment-and-first-ci-check)
+| Page | You will be able to |
+| --- | --- |
+| [Set up the workshop](01-set-up-the-workshop) | install Git and uv, create the repository, run the verify gate, commit |
+| [Run Python in gold-pasal](02-run-python-in-gold-pasal) | start the REPL, bind names, run a script file |
+| [Numbers, strings, and Decimal](03-numbers-strings-and-decimal) | do arithmetic, keep NPR exact, format a receipt line |
+| [Lists, tuples, dicts, and sets](04-lists-tuples-dicts-and-sets) | hold a tray of SKUs and look one up |
+| [Conditionals and loops](05-conditionals-and-loops) | branch on karat, loop a tray, write a comprehension |
+| [Functions](06-functions) | name a pricing rule, pass arguments, return a value |
+| [Release gate: counter script](07-release-gate-counter-script) | run `counter.py` and a green `tests/test_counter.py` |
 
 ## Release evidence
 
-From `gold-pasal`, run `./scripts/verify.sh` and preserve a small commit plus the first green GitHub Actions run named `application-ci`. At the review, defend this invariant: **a new engineer can reproduce the environment without private machine state.**
+From `gold-pasal`:
 
-<ArchitectureTrail
-  before="The quote desk works on one laptop, but nobody can reproduce its Python setup."
-  decision="Introduce only the boundary and mechanism needed by this release."
-  after="A clean checkout runs the same command and reports the same result."
-/>
+```bash
+uv run python counter.py
+./scripts/verify.sh
+```
+
+## What R1 starts from
+
+`counter.py` at the shop root, `tests/test_counter.py` with three passing tests, and a green `verify.sh`. R1 moves the pricing rules into the `gold_pasal` package and adds exceptions, classes, type hints, and a real CLI.

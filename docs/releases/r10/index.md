@@ -1,40 +1,40 @@
 ---
-title: "R10 — Local AI shopping assistant"
-description: "An evaluated Ollama-backed assistant that cites facts and fails honestly."
+title: "R10: Local AI shopping assistant"
+description: "An evaluated assistant on Ollama by default, with async I/O and an OpenAI adapter tested from fixtures."
 ---
 
-# R10 — Local AI shopping assistant
+# R10: Local AI shopping assistant
 
-**Release promise:** An evaluated Ollama-backed assistant that cites facts and fails honestly.
+**What you'll have:** catalog-wins answers; `ChatModel` with Ollama and OpenAI adapters; async HTTP; structured JSON; versioned prompts; retrieval; evals; timeouts and a kill switch; injection tests. CI never calls a paid API.
 
 <LessonMission
   role="online shopper"
   problem="A shopper asks whether a listed ring is 22K, but the model must not invent stock or policy details."
-  destination="A local assistant retrieves catalog facts, returns structured output, and admits missing evidence."
+  destination="The assistant retrieves catalog facts, returns structured output, and admits missing evidence."
 />
 
-## Lessons
+## Before you start
 
-1. [Separate deterministic product logic from probabilistic model behavior](01-separate-deterministic-product-logic-from-probabilistic-model-behavior)
-2. [Run Ollama and hide provider details behind an adapter](02-run-ollama-and-hide-provider-details-behind-an-adapter)
-3. [Ask for structured output and reject invalid responses](03-ask-for-structured-output-and-reject-invalid-responses)
-4. [Version prompts like code and record model configuration](04-version-prompts-like-code-and-record-model-configuration)
-5. [Retrieve catalog facts before generating an answer](05-retrieve-catalog-facts-before-generating-an-answer)
-6. [Compare keyword, SQLite full-text, and embedding retrieval](06-compare-keyword-sqlite-full-text-and-embedding-retrieval)
-7. [Build a small golden evaluation set from shopper questions](07-build-a-small-golden-evaluation-set-from-shopper-questions)
-8. [Measure retrieval, answer quality, latency, and failure separately](08-measure-retrieval-answer-quality-latency-and-failure-separately)
-9. [Add timeouts, bounded retries, fallback, and a kill switch](09-add-timeouts-bounded-retries-fallback-and-a-kill-switch)
-10. [Defend catalog data from prompt injection and untrusted content](10-defend-catalog-data-from-prompt-injection-and-untrusted-content)
-11. [Test AI behavior without paid network calls in CI](11-test-ai-behavior-without-paid-network-calls-in-ci)
-12. [Release gate: show an evaluated assistant that admits uncertainty](12-release-gate-show-an-evaluated-assistant-that-admits-uncertainty)
+You finished [R9](/releases/r9/): a digest-pinned API. Prove `./scripts/verify.sh` is green. Install Ollama for local demos. An OpenAI key is optional and never required in CI.
+
+## Guide
+
+| Page | You will be able to |
+| --- | --- |
+| [Deterministic vs probabilistic](01-deterministic-vs-probabilistic) | state catalog-wins |
+| [Ollama behind a Protocol](02-ollama-behind-a-protocol) | hide the vendor behind ChatModel |
+| [Async Python for model calls](03-async-python-for-model-calls) | await HTTP without blocking /health |
+| [OpenAI adapter with fixtures](04-openai-adapter-with-fixtures) | test hosted JSON without paying in CI |
+| [Structured output](05-structured-output) | validate model JSON |
+| [Version prompts like code](06-version-prompts-like-code) | pin prompt_version |
+| [Retrieve catalog facts first](07-retrieve-catalog-facts-first) | load rows before generate |
+| [Golden evals and metrics](08-golden-evals-and-metrics) | split retrieval from wording |
+| [Timeouts, retries, and fallback](09-timeouts-retries-and-fallback) | bound waits and disable the model |
+| [Prompt injection defenses](10-prompt-injection-defenses) | treat retrieved text as data |
+| [Release gate: honest assistant](11-release-gate-honest-assistant) | evals plus a missing-SKU demo |
 
 ## Release evidence
 
-Run `uv run pytest tests/evals/assistant -q` and preserve versioned prompts, recorded fixtures, metrics, and one failure analysis. At the review, defend this
-invariant: **probabilistic text cannot override deterministic catalog truth.**
-
-<ArchitectureTrail
-  before="A shopper asks whether a listed ring is 22K, but the model must not invent stock or policy details."
-  decision="Introduce only the boundary and mechanism needed by this release."
-  after="A local assistant retrieves catalog facts, returns structured output, and admits missing evidence."
-/>
+```bash
+uv run pytest tests/evals/assistant -q
+```

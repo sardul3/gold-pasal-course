@@ -1,8 +1,8 @@
 # Gold Pasal Course
 
-Gold Pasal Course is a self-paced, project-based path from Java/Spring familiarity to production Python, FastAPI, platform engineering, and safe AI systems.
+Gold Pasal Course is a self-paced, project-based path from first Python to production FastAPI, local Kubernetes, and safe AI systems, with a forward-deployed integration capstone.
 
-The learner builds one Nepal-focused jewelry store in a separate repository: [`../gold-pasal`](../gold-pasal). Lessons introduce concepts only when the next product release needs them. Every release ends with evidence that can be inspected in Git, CI, or the homelab deployment.
+The learner builds one Nepal-focused jewelry store in a separate repository: [`../gold-pasal`](../gold-pasal). Lessons introduce concepts only when the next product release needs them. Every release ends with evidence that can be inspected in Git, CI, kind, or a recorded demo.
 
 ## Repository contract
 
@@ -24,17 +24,17 @@ This repository does **not** own:
 
 The application repository is the source of truth for implementation. Browser progress distinguishes:
 
-1. **Read** — the lesson was opened and reviewed.
-2. **Practiced** — the learner completed the guided exercise.
-3. **Proven** — the learner attached inspectable Git, CI, or deployment evidence.
+1. **Read**: the lesson was opened and reviewed.
+2. **Practiced**: the learner completed the guided exercise.
+3. **Proven**: the learner attached inspectable Git, CI, or deployment evidence.
 
 The application starter intentionally contains no solved release behavior. Learners write both tests and production code; course-owned checks verify only public outcomes.
 
 ## Course map
 
-The core path contains fourteen cumulative releases:
+The core path contains fifteen cumulative releases:
 
-`R0 Workshop → R1 Quote desk → R2 Domain core → R3 API → R4 Inventory → R5 Orders → R6 Production confidence → R7 Containers → R8 Kubernetes → R9 Delivery → R10 LLM → R11 Agent → R12 MCP → R13 Portfolio`
+`R0 Core Python → R1 Intermediate and advanced Python → R2 Domain core → R3 API → R4 Inventory → R5 Orders → R6 Team workflow → R7 Containers → R8 Kubernetes (kind) → R9 Delivery → R10 LLM → R11 Agent → R12 MCP → R13 Forward-deployed integration → R14 Portfolio`
 
 Optional side quests never block graduation.
 

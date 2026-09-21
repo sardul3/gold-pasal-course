@@ -12,9 +12,9 @@ describe('release sidebar', () => {
     const sidebar = createReleaseSidebar(releasesRoot)
     const firstRelease = sidebar[0]
 
-    expect(sidebar).toHaveLength(14)
+    expect(sidebar).toHaveLength(15)
     expect(firstRelease).toMatchObject({
-      text: 'R0 · Your Python workshop',
+      text: 'R0 · Core Python',
       collapsed: true,
     })
     expect(firstRelease.items).toHaveLength(releases[0].lessons.length + 1)
@@ -24,7 +24,7 @@ describe('release sidebar', () => {
     })
     expect(firstRelease.items?.[1]).toEqual({
       text: releases[0].lessons[0].title,
-      link: '/releases/r0/01-welcome-to-gold-pasal-the-product-learner-contract-and-graduation-evidence',
+      link: '/releases/r0/01-set-up-the-workshop',
     })
   })
 

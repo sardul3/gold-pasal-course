@@ -1,39 +1,43 @@
 ---
-title: "R9 — CI/CD and GitOps delivery"
-description: "A traceable path from reviewed change to immutable homelab release."
+title: "R9: Delivery"
+description: "CI builds one image to GHCR, scans it, deploys by digest, and rolls back by digest."
 ---
 
-# R9 — CI/CD and GitOps delivery
+# R9: Delivery
 
-**Release promise:** A traceable path from reviewed change to immutable homelab release.
+**What you'll have:** a test matrix on GitHub Actions; one image per commit on GHCR; SBOM and scan on that digest; kind manifests that name the digest; smoke; rollback by reverting the digest.
 
 <LessonMission
   role="delivery owner"
-  problem="A reviewed commit needs a traceable route to the homelab without giving GitHub broad access to the private network."
-  destination="CI publishes one immutable artifact and Argo CD pulls a reviewed desired state."
+  problem="A reviewed commit needs a traceable route to a running image without kubectl set image from CI."
+  destination="CI publishes one digest; Git records it; kind runs it; rollback is the previous digest."
 />
 
-## Lessons
+## Before you start
 
-1. [Turn the local quality command into GitHub Actions jobs](01-turn-the-local-quality-command-into-github-actions-jobs)
-2. [Cache dependencies without hiding reproducibility problems](02-cache-dependencies-without-hiding-reproducibility-problems)
-3. [Run unit, integration, contract, migration, and container smoke gates](03-run-unit-integration-contract-migration-and-container-smoke-gates)
-4. [Build once and publish an immutable image to GHCR](04-build-once-and-publish-an-immutable-image-to-ghcr)
-5. [Add dependency, secret, image, and provenance checks](05-add-dependency-secret-image-and-provenance-checks)
-6. [Promote by reviewed manifest change, not an imperative cluster command](06-promote-by-reviewed-manifest-change-not-an-imperative-cluster-command)
-7. [Let Argo CD pull the approved homelab state](07-let-argo-cd-pull-the-approved-homelab-state)
-8. [Run post-deployment smoke checks and surface failure clearly](08-run-post-deployment-smoke-checks-and-surface-failure-clearly)
-9. [Roll back by Git history and verified image digest](09-roll-back-by-git-history-and-verified-image-digest)
-10. [Build and deploy the VitePress course independently to GitHub Pages](10-build-and-deploy-the-vitepress-course-independently-to-github-pages)
-11. [Release gate: trace one commit from PR to running homelab release](11-release-gate-trace-one-commit-from-pr-to-running-homelab-release)
+You finished [R8](/releases/r8/): kind runs the API, Ingress answers, undo works. R6 already runs inventory in CI. This release publishes the container and pins it.
+
+Argo CD is a [side quest](/side-quests/argo-cd-gitops). The VitePress course already deploys from this documentation repository; do not treat that as gold-pasal evidence.
+
+## Guide
+
+| Page | You will be able to |
+| --- | --- |
+| [Test matrix in GitHub Actions](01-test-matrix-in-github-actions) | unit, inventory, and smoke jobs |
+| [Build once to GHCR](02-build-once-to-ghcr) | publish a SHA-tagged digest |
+| [Scans and provenance](03-scans-and-provenance) | SBOM, Trivy, attestation |
+| [Deploy by manifest change](04-deploy-by-manifest-change) | bump the digest in Git |
+| [Smoke after deploy](05-smoke-after-deploy) | curl /ready after apply |
+| [Roll back by digest](06-roll-back-by-digest) | revert without rebuilding |
+| [Release gate: commit to running image](07-release-gate-commit-to-running-image) | one SHA matches the Pod |
 
 ## Release evidence
 
-Run `gh run watch --exit-status` and preserve a PR, green workflow, image digest, GitOps diff, and deployment smoke result. At the review, defend this
-invariant: **build once, promote by digest, and roll back through reviewed Git history.**
+```bash
+gh run watch --exit-status
+./scripts/smoke-kind.sh
+```
 
-<ArchitectureTrail
-  before="A reviewed commit needs a traceable route to the homelab without giving GitHub broad access to the private network."
-  decision="Introduce only the boundary and mechanism needed by this release."
-  after="CI publishes one immutable artifact and Argo CD pulls a reviewed desired state."
-/>
+## What R10 starts from
+
+A digest-pinned API. The assistant talks to that API. CI still never calls paid model providers.

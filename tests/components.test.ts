@@ -22,8 +22,8 @@ describe('lesson components', () => {
     })
 
     expect(wrapper.get('aside').attributes('aria-labelledby')).toBe('mission-title')
-    expect(wrapper.get('#mission-title').text()).toBe('The job in front of you')
-    expect(wrapper.text()).toContain('Incoming at the counter · inventory manager')
+    expect(wrapper.get('#mission-title').text()).toBe('The job')
+    expect(wrapper.get('.gp-eyebrow').text()).toBe('inventory manager')
     expect(wrapper.text()).toContain('Done looks like: Exactly one hold succeeds.')
   })
 
@@ -31,9 +31,9 @@ describe('lesson components', () => {
     const wrapper = mount(ReleaseConstellation)
     const links = wrapper.findAll('a')
 
-    expect(links).toHaveLength(14)
+    expect(links).toHaveLength(15)
     expect(links[0].attributes('href')).toBe('/releases/r0/')
-    expect(links[13].attributes('href')).toBe('/releases/r13/')
+    expect(links[14].attributes('href')).toBe('/releases/r14/')
     expect(wrapper.get('ol').classes()).toContain('constellation__timeline')
     expect(wrapper.get('ol').attributes('role')).toBe('list')
   })

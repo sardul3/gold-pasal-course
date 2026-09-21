@@ -4,19 +4,20 @@ import { join } from 'node:path'
 const root = new URL('../docs/releases/', import.meta.url)
 const expectedCounts = {
   r0: 7,
-  r1: 12,
-  r2: 12,
-  r3: 12,
-  r4: 11,
-  r5: 11,
-  r6: 11,
-  r7: 9,
-  r8: 11,
-  r9: 11,
-  r10: 12,
-  r11: 11,
-  r12: 11,
+  r1: 7,
+  r2: 8,
+  r3: 7,
+  r4: 9,
+  r5: 9,
+  r6: 9,
+  r7: 7,
+  r8: 8,
+  r9: 7,
+  r10: 11,
+  r11: 9,
+  r12: 9,
   r13: 8,
+  r14: 6,
 }
 
 const errors = []

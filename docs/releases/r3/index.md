@@ -1,40 +1,53 @@
 ---
-title: "R3 — API-first catalog"
-description: "A documented FastAPI catalog contract with stable errors and tests."
+title: "R3: HTTP APIs with FastAPI"
+description: "A documented catalog API with validated bodies, problem details, and in-process tests."
 ---
 
-# R3 — API-first catalog
+# R3: HTTP APIs with FastAPI
 
-**Release promise:** A documented FastAPI catalog contract with stable errors and tests.
+**What you'll have:** the catalog behind HTTP. A FastAPI application that serves `/health`, creates and lists catalog items with validated JSON bodies, answers every expected failure with a problem-details document, is wired through dependency injection to the `CatalogRepository` port from R2, and is tested in-process with HTTPX.
 
 <LessonMission
   role="catalog manager"
-  problem="Staff and future clients need a stable way to create and find catalog items."
-  destination="The documented HTTP contract validates input and returns consistent success and failure shapes."
+  problem="Sita cannot paste Python into the counter tablet. She needs HTTP: create a 22K SKU, find it again by karat, and get a readable error when someone types 19K."
+  destination="uvicorn serves GET /health, POST and GET /api/catalog/items, GET /api/catalog/items/{sku}; a 19K body returns 422 application/problem+json; /openapi.json documents all of it; tests/http proves it without a running port."
 />
 
-## Lessons
+## Before you start
 
-1. [Follow an HTTP request from client to response](01-follow-an-http-request-from-client-to-response)
-2. [Design the catalog contract in OpenAPI before FastAPI code](02-design-the-catalog-contract-in-openapi-before-fastapi-code)
-3. [Create the FastAPI application and health endpoint](03-create-the-fastapi-application-and-health-endpoint)
-4. [Validate request and response data with Pydantic v2](04-validate-request-and-response-data-with-pydantic-v2)
-5. [Add products with SKU, metal, purity, weight, and price inputs](05-add-products-with-sku-metal-purity-weight-and-price-inputs)
-6. [Retrieve and list products with filtering, sorting, and pagination](06-retrieve-and-list-products-with-filtering-sorting-and-pagination)
-7. [Return consistent Problem Details for expected failures](07-return-consistent-problem-details-for-expected-failures)
-8. [Separate HTTP schemas from domain objects](08-separate-http-schemas-from-domain-objects)
-9. [Inject repositories and services through explicit dependencies](09-inject-repositories-and-services-through-explicit-dependencies)
-10. [Test routes in-process with HTTPX](10-test-routes-in-process-with-httpx)
-11. [Detect accidental API changes with contract checks](11-detect-accidental-api-changes-with-contract-checks)
-12. [Release gate: demo the API from docs, curl, and tests](12-release-gate-demo-the-api-from-docs-curl-and-tests)
+You finished [R2](/releases/r2/): `domain.py` holds `Money`, `Weight`, `Purity`; `catalog.py` holds `CatalogItem`, the `CatalogRepository` Protocol, and `InMemoryCatalog`; `tests/unit` is green with Hypothesis installed. Prove it from `gold-pasal`:
+
+```bash
+uv run python -c "from gold_pasal.catalog import CatalogRepository, InMemoryCatalog; print('ports ready')"
+uv run pytest tests/unit -q | tail -1
+```
+
+```text
+ports ready
+25 passed in 0.40s
+```
+
+The API on these pages asks for `CatalogRepository` and never imports `InMemoryCatalog` in a route. Pricing stays in `gold_pasal.pricing`; the API stores karat and grams and never recomputes Maya's total.
+
+## Guide
+
+| Page | You will be able to |
+| --- | --- |
+| [HTTP and the first FastAPI app](01-http-and-the-first-fastapi-app) | run uvicorn, read a request and response, open `/docs` |
+| [Pydantic models and request bodies](02-pydantic-models-and-request-bodies) | accept a JSON body, validate it, return 201 |
+| [Path and query parameters](03-path-and-query-parameters) | read one item by SKU, filter a list by karat with a bounded limit |
+| [Errors and problem details](04-errors-and-problem-details) | turn every expected failure into RFC 9457 problem JSON |
+| [Dependency injection and routers](05-dependency-injection-and-routers) | give routes a repository with `Depends`, split files with `APIRouter` |
+| [Test the API with HTTPX](06-test-the-api-with-httpx) | drive the app in-process with `TestClient` and assert the contract |
+| [Release gate: catalog from curl](07-release-gate-catalog-from-curl) | show the four curls a reviewer will run |
 
 ## Release evidence
 
-Run `uv run pytest tests/http -q` and preserve an OpenAPI diff, HTTP tests, and a curl transcript. At the review, defend this
-invariant: **transport validation cannot bypass domain invariants or leak stack traces.**
+From `gold-pasal`:
 
-<ArchitectureTrail
-  before="Staff and future clients need a stable way to create and find catalog items."
-  decision="Introduce only the boundary and mechanism needed by this release."
-  after="The documented HTTP contract validates input and returns consistent success and failure shapes."
-/>
+```bash
+uv run pytest tests/http -q
+uv run uvicorn gold_pasal.api.app:app --port 8000
+```
+
+R4 replaces `InMemoryCatalog` behind the same `CatalogRepository` port with PostgreSQL and adds `/api/inventory/*`.

@@ -8,8 +8,8 @@ defineProps<{
 
 <template>
   <aside class="gp-panel mission" aria-labelledby="mission-title">
-    <p class="gp-eyebrow">Incoming at the counter · {{ role }}</p>
-    <h2 id="mission-title">The job in front of you</h2>
+    <p class="gp-eyebrow">{{ role }}</p>
+    <h2 id="mission-title">The job</h2>
     <p class="mission__problem">{{ problem }}</p>
     <p class="mission__destination">
       <strong>Done looks like:</strong> {{ destination }}
