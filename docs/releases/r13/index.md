@@ -1,44 +1,39 @@
 ---
-title: "R13 — Job-ready portfolio release"
-description: "A defensible system narrative supported by working operational evidence."
+title: "R13: Forward-deployed integration"
+description: "A customer CSV plus a quirky HTTP API, an adapter, HTMX demo, runbook, and a recorded stakeholder walkthrough."
 ---
 
-# R13 — Job-ready portfolio release
+# R13: Forward-deployed integration
 
-**Release promise:** A defensible system narrative supported by working operational evidence.
+**What you'll have:** a mock Mandala Trails system; a discovery note; an adapter; assistant and MCP using that data; a thin HTMX demo; a runbook; a stakeholder script.
 
 <LessonMission
-  role="job candidate"
-  problem="A reviewer has limited time and needs evidence of judgment, not a tour of every file."
-  destination="A concise demo connects product behavior, design trade-offs, tests, delivery, recovery, and AI safety."
+  role="forward-deployed engineer"
+  problem="The product works on Gold Pasal's catalog. The customer has a CSV export and a quirky HTTP API."
+  destination="An adapter, a demo a non-engineer can watch, and a runbook someone else can follow."
 />
 
-## Lessons
+## Before you start
 
-1. [Review the architecture and close accidental complexity](01-review-the-architecture-and-close-accidental-complexity)
-2. [Curate ADRs, diagrams, OpenAPI, and operational runbooks](02-curate-adrs-diagrams-openapi-and-operational-runbooks)
-3. [Build a guided Demo Mode from the Portfolio Ledger](03-build-a-guided-demo-mode-from-the-portfolio-ledger)
-4. [Rehearse a backend system-design walkthrough](04-rehearse-a-backend-system-design-walkthrough)
-5. [Rehearse Python, testing, API, database, Kubernetes, and AI trade-offs](05-rehearse-python-testing-api-database-kubernetes-and-ai-trade-offs)
-6. [Translate release evidence into honest résumé bullets](06-translate-release-evidence-into-honest-resume-bullets)
-7. [Run a final incident, rollback, and agent-safety drill](07-run-a-final-incident-rollback-and-agent-safety-drill)
-8. [Release gate: publish the final release and identify the next specialization](08-release-gate-publish-the-final-release-and-identify-the-next-specialization)
+You finished [R12](/releases/r12/): MCP and the agent talk to the Gold Pasal API. This release does not replace that API. It feeds it customer data.
+
+The TypeScript storefront stays optional.
+
+## Guide
+
+| Page | You will be able to |
+| --- | --- |
+| [Meet the customer system](01-meet-the-customer-system) | run the messy mock |
+| [Write the discovery note](02-write-the-discovery-note) | mapping and non-goals |
+| [Build the customer adapter](03-build-the-customer-adapter) | Protocol at the edge |
+| [Point assistant and MCP at it](04-point-assistant-and-mcp-at-it) | MT- SKUs in evals |
+| [Serve an HTMX demo](05-serve-an-htmx-demo) | stakeholder UI |
+| [Write the runbook](06-write-the-runbook) | start and rollback |
+| [Record the stakeholder demo](07-record-the-stakeholder-demo) | 5-8 minute script |
+| [Release gate: customer integration](08-release-gate-customer-integration) | all artifacts |
 
 ## Release evidence
 
-Run `./scripts/verify.sh && kubectl rollout status deployment/gold-pasal-api` and preserve curated ADRs, CI/deployment evidence, demo script, and honest résumé bullets. At the review, defend this
-invariant: **every claim in the presentation points to inspectable evidence and names its limits.**
-
-<ArchitectureTrail
-  before="A reviewer has limited time and needs evidence of judgment, not a tour of every file."
-  decision="Introduce only the boundary and mechanism needed by this release."
-  after="A concise demo connects product behavior, design trade-offs, tests, delivery, recovery, and AI safety."
-/>
-
-## Rehearse the final story
-
-<DemoMode />
-
-## Curate the evidence
-
-<PortfolioLedger />
+```bash
+uv run pytest tests/adapters/test_mandala.py tests/http/test_demo.py -q
+```

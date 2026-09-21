@@ -1,0 +1,267 @@
+---
+id: r4-04
+title: "Alembic migrations"
+release: r4
+order: 4
+prerequisites: [r4-03]
+outcomes:
+  - Initialise Alembic and point env.py at Base.metadata and DATABASE_URL
+  - Autogenerate, read, lint, and apply the first revision
+  - Downgrade one step and upgrade again
+evidence: [commit, ci-run]
+---
+
+<LessonMission
+  role="inventory lead"
+  problem="create_all made three tables on your laptop. Nobody else's database has them, and next month a column will change. A schema with no history cannot be reproduced or rolled back."
+  destination="alembic upgrade head creates the schema on any empty database; every change from now on is a versioned revision file committed with the code that needs it."
+/>
+
+# Alembic migrations
+
+A **migration** is a versioned, reviewable change to the database schema: create this table, add that index, and how to undo it. **Alembic** is SQLAlchemy's migration tool. It compares `Base.metadata` with the live database, writes the difference as a Python file, and applies files in order, remembering where each database is.
+
+## See the idea first
+
+From `gold-pasal`, with `DATABASE_URL` exported and the scratch tables from the previous page dropped:
+
+```bash
+uv add alembic
+uv run alembic init alembic
+```
+
+```text
+Creating directory '/Users/you/dev/gold-pasal/alembic' ...  done
+Creating directory '/Users/you/dev/gold-pasal/alembic/versions' ...  done
+Generating /Users/you/dev/gold-pasal/alembic/script.py.mako ...  done
+Generating /Users/you/dev/gold-pasal/alembic/env.py ...  done
+Generating /Users/you/dev/gold-pasal/alembic/README ...  done
+Generating /Users/you/dev/gold-pasal/alembic.ini ...  done
+Please edit configuration/connection/logging settings in /Users/you/dev/gold-pasal/alembic.ini before proceeding.
+```
+
+Two things to edit before Alembic knows about the shop: where the tables are defined, and how to reach the database.
+
+## Wire env.py
+
+`alembic/env.py` runs every time you invoke Alembic. Open it and change the top:
+
+```python
+import os
+from logging.config import fileConfig
+
+from alembic import context
+from sqlalchemy import engine_from_config, pool
+
+from gold_pasal import orm  # noqa: F401  (imports register every table on Base.metadata)
+from gold_pasal.db import Base
+
+config = context.config
+
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
+# Alembic compares this metadata with the live database to autogenerate revisions.
+target_metadata = Base.metadata
+
+# The URL comes from the environment, never from alembic.ini.
+config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
+```
+
+Leave the two `run_migrations_*` functions below as generated.
+
+`from gold_pasal import orm` looks unused, hence the `# noqa: F401`. Importing the module is what registers `CatalogItemRow`, `StockItemRow`, and `HoldRow` on `Base.metadata`; without it, autogenerate sees an empty model and offers to drop every table.
+
+In `alembic.ini`, replace the `sqlalchemy.url = driver://...` line with a comment:
+
+```ini
+# sqlalchemy.url is set from DATABASE_URL in env.py
+```
+
+A password in `alembic.ini` would be a password in Git.
+
+## The first revision
+
+```bash
+uv run alembic revision --autogenerate -m "catalog items, stock items, holds"
+```
+
+```text
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'catalog_items'
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'stock_items'
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'holds'
+Generating /Users/you/dev/gold-pasal/alembic/versions/18e5c1575a65_catalog_items_stock_items_holds.py ...  done
+```
+
+Alembic connected, found no tables, compared with the three mapped classes, and wrote a file. Your revision id will differ. Open it:
+
+```python
+"""catalog items, stock items, holds
+
+Revision ID: 18e5c1575a65
+Revises:
+Create Date: 2026-09-21 18:25:46
+
+"""
+
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+revision: str = '18e5c1575a65'
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    op.create_table('catalog_items',
+    sa.Column('sku', sa.String(length=40), nullable=False),
+    sa.Column('name', sa.String(length=120), nullable=False),
+    ...
+    sa.PrimaryKeyConstraint('sku')
+    )
+    op.create_table('stock_items', ...)
+    op.create_table('holds',
+    ...
+    sa.ForeignKeyConstraint(['stock_item_id'], ['stock_items.stock_item_id'], ),
+    sa.PrimaryKeyConstraint('hold_id')
+    )
+
+
+def downgrade() -> None:
+    op.drop_table('holds')
+    op.drop_table('stock_items')
+    op.drop_table('catalog_items')
+```
+
+`upgrade()` is the `CREATE TABLE` statements from the SQL page, written as `op.*` calls. `downgrade()` undoes them in reverse order, holds first because it references stock items. `down_revision = None` marks this as the first revision; each later file names the one before it, forming a chain.
+
+Read every autogenerated file before applying it. Autogenerate is good at tables and columns and blind to some things (renames look like a drop plus an add; data migrations are never generated).
+
+### Lint the generated file
+
+The shop's `verify.sh` runs ruff over the whole repository, and Alembic's template uses older import styles. Fix them once per revision:
+
+```bash
+uv run ruff check --fix alembic
+uv run ruff format alembic
+```
+
+```text
+Found 6 errors (6 fixed, 0 remaining).
+2 files reformatted
+```
+
+The file now reads `from collections.abc import Sequence` and `down_revision: str | Sequence[str] | None`. Also tell ruff that `alembic` is a library, because a folder named `alembic/` at the root of the repository otherwise looks like your own code and `import` sorting goes wrong later:
+
+```toml
+[tool.ruff.lint.isort]
+known-third-party = ["alembic"]
+```
+
+Add that to `pyproject.toml` under the existing `[tool.ruff.lint]` table.
+
+## Apply it
+
+```bash
+uv run alembic upgrade head
+```
+
+```text
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 18e5c1575a65, catalog items, stock items, holds
+```
+
+`head` means "the latest revision". Check where the database is:
+
+```bash
+uv run alembic current
+```
+
+```text
+18e5c1575a65 (head)
+```
+
+Alembic stores that id in a table it created, `alembic_version`. In psql, `\dt` now shows four tables: your three and that one.
+
+"Transactional DDL" is a PostgreSQL feature: the whole revision runs inside one transaction, so a failure halfway leaves the database exactly as it was.
+
+## Down and up
+
+```bash
+uv run alembic downgrade -1
+uv run alembic current
+```
+
+```text
+INFO  [alembic.runtime.migration] Running downgrade 18e5c1575a65 -> , catalog items, stock items, holds
+```
+
+`current` prints nothing: the database is back at the beginning and `\dt` shows only `alembic_version`. Then:
+
+```bash
+uv run alembic upgrade head
+```
+
+Back at `18e5c1575a65`. A revision you have not seen go down and up is a revision you do not know works. Do this once for every file you write.
+
+```bash
+uv run alembic history
+```
+
+```text
+<base> -> 18e5c1575a65 (head), catalog items, stock items, holds
+```
+
+## The workflow from here
+
+1. Change a mapped class in `orm.py`.
+2. `uv run alembic revision --autogenerate -m "what changed"`.
+3. Read the file. Fix what autogenerate got wrong.
+4. `uv run ruff check --fix alembic && uv run ruff format alembic`.
+5. `uv run alembic upgrade head`, then `downgrade -1`, then `upgrade head`.
+6. Commit the revision file with the code change that needs it.
+
+Page 7 walks this loop for a real change, the partial unique index. R8 runs `upgrade head` as a step before the API starts in Kubernetes.
+
+::: warning Never edit an applied revision
+Once a revision has run against any database you care about, it is history. Write a new revision to change your mind. Editing an applied file leaves that database claiming a version whose content no longer matches.
+:::
+
+## If it fails
+
+| What you see | Cause | Fix |
+| --- | --- | --- |
+| `KeyError: 'DATABASE_URL'` | Not exported | `export DATABASE_URL=...` |
+| Autogenerate produces an empty `upgrade()` | `orm` not imported in `env.py` | Add `from gold_pasal import orm  # noqa: F401` |
+| Autogenerate wants to drop your tables | Same cause, or the wrong `target_metadata` | `target_metadata = Base.metadata` |
+| `relation "stock_items" already exists` | Scratch tables left from `create_all` | `Base.metadata.drop_all(engine)` in the REPL, or `docker compose down -v` |
+| ruff `UP035` or `UP007` in `alembic/versions` | Generated template style | `uv run ruff check --fix alembic` |
+| ruff `I001` about `from alembic import command` later | ruff thinks `alembic` is first-party | `known-third-party = ["alembic"]` |
+| `Target database is not up to date` | You wrote a revision while the database was behind | `upgrade head` first, then autogenerate |
+
+## Practice
+
+<LessonQuiz
+  question="You ran alembic upgrade head on your laptop. A teammate clones the repo and starts an empty database. What do they run?"
+  a="Base.metadata.create_all(engine)"
+  b="uv run alembic upgrade head"
+  c="The SQL from the SQL page, by hand"
+  d="Nothing; SQLAlchemy creates tables on first use"
+  correct="b"
+>
+
+The revision files are in Git. `upgrade head` replays them in order on any database, empty or partly migrated, and records where it got to. `create_all` would build the current shape with no history and no way down.
+
+</LessonQuiz>
+
+Next: [A PostgreSQL catalog adapter](05-a-postgresql-catalog-adapter), which puts rows behind the R2 port.
+
+<EvidenceCard
+  command="uv run alembic upgrade head && uv run alembic current"
+  artifact="alembic/ with env.py reading DATABASE_URL and one linted revision creating three tables"
+  invariant="The schema is reproducible from committed revision files on any empty database"
+/>

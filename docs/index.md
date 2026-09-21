@@ -31,8 +31,8 @@ The same pricing story begins with Python values, becomes tested domain code, cr
 
 <PriceWorkbench />
 
-## Fourteen releases. One cumulative system.
+## Fifteen releases. One cumulative system.
 
-Follow the assay line from setup to portfolio. Every marker is a working product increment, not a chapter you read and discard.
+Follow the assay line from setup to a customer integration and a portfolio. Every marker is a working product increment, not a chapter you read and discard.
 
 <ReleaseConstellation />

@@ -1,40 +1,54 @@
 ---
-title: "R2 — A trustworthy domain core"
-description: "Pricing rules protected by tests, value objects, and explicit ports."
+title: "R2: Design a trustworthy domain core"
+description: "Value objects, property tests, Protocols, fakes, and logging around one pricing seam."
 ---
 
-# R2 — A trustworthy domain core
+# R2: Design a trustworthy domain core
 
-**Release promise:** Pricing rules protected by tests, value objects, and explicit ports.
+**What you'll have:** the design and testing techniques that keep a pricing module honest as it grows: value objects that cannot hold a bad value, a test suite with structure, property-based tests that hunt for counterexamples, swappable policies behind a Protocol, a repository port with an in-memory fake, and a log line for every priced quote.
 
 <LessonMission
   role="pricing policy owner"
-  problem="A rounding change fixes one quote but silently changes another purity and charge combination."
-  destination="Tests state pricing invariants before refactoring changes the implementation."
+  problem="A rounding tweak that fixes Maya's 22K total can quietly drop 18K gold value below 14K. A festival stall wants a flat making fee. The tray knows RING-01 is 5.00 g but quote() still wants grams typed by hand. The CLI prints a number in every case."
+  destination="gold_pasal.pricing.quote still prints Maya's NPR 231080.15, and around it: Money, Weight, and Purity types; tests/unit with conftest and markers; Hypothesis invariants; a MakingChargePolicy; a CatalogRepository fake; one INFO log per quote."
 />
 
-## Lessons
+## Before you start
 
-1. [Turn a pricing bug into the first failing pytest](01-turn-a-pricing-bug-into-the-first-failing-pytest)
-2. [Arrange fixtures around real Nepal jewelry examples](02-arrange-fixtures-around-real-nepal-jewelry-examples)
-3. [Cover karat, wastage, making charges, VAT, and rounding with parametrization](03-cover-karat-wastage-making-charges-vat-and-rounding-with-parametrization)
-4. [Separate Money, Weight, Purity, and Quote as value objects](04-separate-money-weight-purity-and-quote-as-value-objects)
-5. [Refactor toward clear names, small functions, and explicit invariants](05-refactor-toward-clear-names-small-functions-and-explicit-invariants)
-6. [Use Strategy for replaceable making-charge rules](06-use-strategy-for-replaceable-making-charge-rules)
-7. [Use Protocol and dependency inversion instead of framework coupling](07-use-protocol-and-dependency-inversion-instead-of-framework-coupling)
-8. [Introduce Repository without building a database too early](08-introduce-repository-without-building-a-database-too-early)
-9. [Test boundaries with fakes, stubs, and mocks for the right reasons](09-test-boundaries-with-fakes-stubs-and-mocks-for-the-right-reasons)
-10. [Add property tests for pricing invariants](10-add-property-tests-for-pricing-invariants)
-11. [Record auditable pricing decisions](11-record-auditable-pricing-decisions)
-12. [Release gate: defend the domain model and testing choices](12-release-gate-defend-the-domain-model-and-testing-choices)
+You finished [R1](/releases/r1/): `uv run gold-pasal quote ...` prints Maya's five lines, `src/gold_pasal/pricing.py` exposes `quote()`, and `tests/test_quote.py` and `tests/test_cli.py` are green. Prove it from `gold-pasal`:
+
+```bash
+uv run gold-pasal quote --rate-per-tola 200000 --weight-grams 11.6638038 --karat 22 --wastage-percent 2 --making-charge-per-gram 1500 | tail -1
+uv run pytest -q | tail -1
+```
+
+```text
+Total: NPR 231080.15
+14 passed in 0.20s
+```
+
+Every page here keeps `./scripts/verify.sh` green; the refactor page is the only one that changes existing tests.
+
+## Guide
+
+| Page | You will be able to |
+| --- | --- |
+| [Value objects: Money, Weight, Purity](01-value-objects-money-weight-purity) | write a frozen type with arithmetic, ordering, and validation |
+| [Refactor pricing with a safety net](02-refactor-pricing-with-a-safety-net) | move `quote()` onto the new types without changing its answers |
+| [Organize tests: conftest and markers](03-organize-tests-conftest-and-markers) | lay out `tests/unit`, share fixtures, register markers |
+| [Property-based tests with Hypothesis](04-property-based-tests-with-hypothesis) | state an invariant and let Hypothesis search for a counterexample |
+| [Protocols and the strategy pattern](05-protocols-and-the-strategy-pattern) | swap the making-charge rule without editing `gold_value` |
+| [Repositories and test doubles](06-repositories-and-test-doubles) | price a SKU through a port, with a fake and, once, a mock |
+| [Logging and auditable decisions](07-logging-and-auditable-decisions) | log one line per quote and assert it with `caplog` |
+| [Release gate: pricing invariants](08-release-gate-pricing-invariants) | show sorted gold across karats and a rejected 19K from the CLI |
 
 ## Release evidence
 
-Run `uv run pytest tests/unit/pricing -q` and preserve a red-to-green test commit and the pricing decision record. At the review, defend this
-invariant: **domain rules remain framework-free, explicit, and auditable.**
+From `gold-pasal`:
 
-<ArchitectureTrail
-  before="A rounding change fixes one quote but silently changes another purity and charge combination."
-  decision="Introduce only the boundary and mechanism needed by this release."
-  after="Tests state pricing invariants before refactoring changes the implementation."
-/>
+```bash
+uv run pytest tests/unit -q
+uv run gold-pasal quote --rate-per-tola 200000 --weight-grams 5.00 --karat 19 --wastage-percent 2 --making-charge-per-gram 1500
+```
+
+R3 puts this domain behind HTTP. The `CatalogRepository` Protocol from this release is what the API's routes ask for.

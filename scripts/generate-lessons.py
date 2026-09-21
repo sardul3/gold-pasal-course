@@ -129,12 +129,12 @@ PROFILES = {
         "What makes a container image reproducible and safe to promote?",
     ),
     "r8": Profile(
-        "homelab platform operator",
+        "platform operator",
         "A new API image must roll out without dropping healthy traffic or hiding an invalid configuration.",
-        "Kubernetes converges to a constrained workload and exposes a tested rollback path.",
+        "kind converges to a constrained workload and exposes a tested rollback path.",
         "A pod with a failing readiness probe receives no Service traffic while the previous ReplicaSet remains available.",
         "the Kubernetes workload status",
-        "kubectl kustomize deploy/overlays/homelab | kubectl apply --dry-run=server -f -",
+        "kubectl apply -f deploy/kind/ && kubectl rollout status deployment/gold-pasal-api",
         "rendered manifests, rollout status, and rollback evidence",
         "unready workloads receive no traffic and credentials stay outside Git",
         "cause one safe probe failure, inspect Events and endpoints, then restore the prior revision",
@@ -142,15 +142,15 @@ PROFILES = {
     ),
     "r9": Profile(
         "delivery owner",
-        "A reviewed commit needs a traceable route to the homelab without giving GitHub broad access to the private network.",
-        "CI publishes one immutable artifact and Argo CD pulls a reviewed desired state.",
+        "A reviewed commit needs a traceable route to a running image without kubectl set image from CI.",
+        "CI publishes one digest; Git records it; kind runs it; rollback is the previous digest.",
         "The promoted manifest names a GHCR digest; rerunning CI cannot replace the bytes behind that digest.",
         "the commit-to-cluster provenance chain",
         "gh run watch --exit-status",
-        "a PR, green workflow, image digest, GitOps diff, and deployment smoke result",
+        "a PR, green workflow, image digest, apply, and smoke result",
         "build once, promote by digest, and roll back through reviewed Git history",
         "trace one running pod back to its image digest and source commit, then rehearse a rollback",
-        "Why prefer pull-based GitOps for a private homelab?",
+        "Why promote by digest instead of rebuilding on the cluster?",
     ),
     "r10": Profile(
         "online shopper",
@@ -189,13 +189,25 @@ PROFILES = {
         "Where do MCP protocol, authorization, and business validation boundaries belong?",
     ),
     "r13": Profile(
+        "forward-deployed engineer",
+        "The product works on Gold Pasal's catalog. The customer has a CSV export and a quirky HTTP API.",
+        "An adapter, a demo a non-engineer can watch, and a runbook someone else can follow.",
+        "Mandala item_code maps to SKU MT-{code}; tola weights convert with the R1 constant before they enter Weight.",
+        "the customer integration",
+        "uv run pytest tests/adapters/test_mandala.py tests/http/test_demo.py -q",
+        "discovery note, adapter, HTMX demo, runbook, and stakeholder script",
+        "customer constraints stay visible in the write-up and the running system",
+        "show the mapping table, a live search, an unknown SKU, and one failure from the runbook",
+        "How do you integrate a messy customer system without forking your product?",
+    ),
+    "r14": Profile(
         "job candidate",
         "A reviewer has limited time and needs evidence of judgment, not a tour of every file.",
         "A concise demo connects product behavior, design trade-offs, tests, delivery, recovery, and AI safety.",
-        "A six-step walkthrough starts from an inventory invariant, proves it through the API, then traces the deployed artifact and rollback.",
+        "A ten-minute walkthrough starts from an inventory invariant, proves it through the API, then traces the digest and the Mandala demo.",
         "the end-to-end portfolio narrative",
-        "./scripts/verify.sh && kubectl rollout status deployment/gold-pasal",
-        "curated ADRs, CI/deployment evidence, demo script, and honest résumé bullets",
+        "./scripts/verify.sh",
+        "curated ADRs, CI/deployment evidence, demo script, and honest resume bullets",
         "every claim in the presentation points to inspectable evidence and names its limits",
         "record a ten-minute walkthrough, remove any claim you cannot prove, and answer one adversarial trade-off question",
         "Which decision best demonstrates your engineering judgment, and what would make you revisit it?",
@@ -224,8 +236,8 @@ def parse_course() -> list[tuple[str, str, str, list[str]]]:
     for release_id, title, promise, raw_titles in pattern.findall(source):
         titles = re.findall(r"'([^']+)'", raw_titles)
         releases.append((release_id, title, promise, titles))
-    if len(releases) != 14:
-        raise RuntimeError(f"Expected 14 releases, parsed {len(releases)}")
+    if len(releases) != 15:
+        raise RuntimeError(f"Expected 15 releases, parsed {len(releases)}")
     return releases
 
 
@@ -381,7 +393,7 @@ description: "{promise}"
 
 # {release_id.upper()} — {title}
 
-**Release promise:** {promise}
+**What you'll have:** {promise}
 
 <LessonMission
   role="{profile.role}"
@@ -395,14 +407,9 @@ description: "{promise}"
 
 ## Release evidence
 
-Run `{profile.command}` and preserve {profile.artifact}. At the review, defend this
-invariant: **{profile.invariant}.**
-
-<ArchitectureTrail
-  before="{profile.problem}"
-  decision="Introduce only the boundary and mechanism needed by this release."
-  after="{profile.destination}"
-/>
+```bash
+{profile.command}
+```
 """
 
 

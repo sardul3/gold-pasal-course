@@ -2,7 +2,6 @@ import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
 
 import ApiWorkbench from './components/ApiWorkbench.vue'
-import ArchitectureTrail from './components/ArchitectureTrail.vue'
 import CareerSignal from './components/CareerSignal.vue'
 import DemoMode from './components/DemoMode.vue'
 import EvidenceCard from './components/EvidenceCard.vue'
@@ -26,7 +25,6 @@ const theme: Theme = {
   Layout,
   enhanceApp({ app }) {
     app.component('ApiWorkbench', ApiWorkbench)
-    app.component('ArchitectureTrail', ArchitectureTrail)
     app.component('CareerSignal', CareerSignal)
     app.component('DemoMode', DemoMode)
     app.component('EvidenceCard', EvidenceCard)

@@ -8,21 +8,17 @@ defineProps<{
 
 <template>
   <aside class="gp-panel evidence">
-    <p class="gp-eyebrow">Proof, not a checkmark</p>
     <dl>
       <div>
         <dt>Run</dt>
         <dd><code>{{ command }}</code></dd>
       </div>
       <div>
-        <dt>Preserve</dt>
+        <dt>Output</dt>
         <dd>{{ artifact }}</dd>
       </div>
-      <div>
-        <dt>Defend</dt>
-        <dd>{{ invariant }}</dd>
-      </div>
     </dl>
+    <p>{{ invariant }}</p>
   </aside>
 </template>
 
@@ -55,5 +51,10 @@ dt {
 
 dd {
   margin: 0;
+}
+
+p {
+  color: var(--vp-c-text-2);
+  margin: 0.75rem 0 0;
 }
 </style>

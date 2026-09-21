@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest'
 import { allLessons, releases } from '../.vitepress/theme/data/course'
 
 describe('course metadata', () => {
-  it('has a continuous release sequence from r0 through r13', () => {
+  it('has a continuous release sequence from r0 through r14', () => {
     expect(releases.map(({ id }) => id)).toEqual(
-      Array.from({ length: 14 }, (_, index) => `r${index}`),
+      Array.from({ length: 15 }, (_, index) => `r${index}`),
     )
   })
 
