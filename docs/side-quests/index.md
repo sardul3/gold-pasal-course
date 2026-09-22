@@ -39,6 +39,10 @@ Add currency and weight boundaries without weakening the internal Money and Weig
 
 Use the classical ML path in `ai-sme-map` to analyze historical demand. Never let a model silently determine the auditable customer quote.
 
+## Create a USD to NRS MCP server
+
+After `uv` works, create a personal MCP server and a startup command hook that prints the live rate. The shop MCP server in [R12](/releases/r12/) stays separate. See [Create a USD to NRS MCP server for Claude Code startup](/side-quests/usd-npr-on-session-start).
+
 ## Remote MCP
 
 Add a remote transport and OAuth only after the local stdio server has contract tests, least-privilege tools, and explicit state-changing confirmation.

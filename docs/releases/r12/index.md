@@ -17,7 +17,7 @@ description: "A least-privilege stdio MCP server backed by the existing applicat
 
 You finished [R11](/releases/r11/): tools already call the API and holds need confirm. MCP is another harness, not a new domain.
 
-Remote transport is a side quest.
+Remote transport is a side quest. A startup notice with the live USD to NRS rate lives in its own folder: [side quest](/side-quests/usd-npr-on-session-start).
 
 ## Guide
 
